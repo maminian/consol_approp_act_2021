@@ -83,17 +83,14 @@ for i in range( pf.numPages ):
 
 # identify all pages associated with some pattern.
 #tomatch = ["[cC]opyright", "[fF]elony", "[sS]tream"]
-tomatch = [
-"Egypt",
-"Sudan",
-"Ukraine",
-"Isr[ae]{,2}l",
-"Nepal",
-"Burma",
-"Cambodia",
-"Pakistan",
-"Asia"
-]
+
+with open('countries.txt', 'r') as f:
+    tomatch = f.readlines()
+#
+for j in range(len(tomatch)):
+    tomatch[j] = tomatch[j].replace('\n', '')
+#
+
 
 hit_positions = np.zeros( (len(tomatch), len(ALL_TEXT_EVER)) )
 
@@ -116,12 +113,14 @@ for j,hi in enumerate(hit_positions):
         print(j)
 #
 #occurrences = [np.convolve(hi, window) for hi in hit_positions]
-for j,(tm,oc) in enumerate(zip(tomatch, oc)):
+for j,(tm,oc) in enumerate(zip(tomatch, occurrences)):
     if max(oc) < 3:
         continue    # don't bother with shitter countries.
     #
     idx = np.argmax(oc)
-    ax.plot(range(len(oc)), oc, lw=1, alpha=0.5)
-    ax.text(idx, odx[idx], tm, fontsize=10, rotation=45, ha='left', va='bottom')
+    locs = np.where(oc!=0)[0]
+    
+    ax.plot(locs, oc[locs], lw=1, alpha=0.5)
+    ax.text(idx, oc[idx], tm, fontsize=10, rotation=45, ha='left', va='bottom')
 #
 
